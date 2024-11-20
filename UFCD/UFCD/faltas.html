@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faltas - Sistema Inovar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        #userInfo {
+            color: white;
+            font-size: 16px;
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 100px; /* Espaço para o header fixo */
+            width: 100%;
+            max-width: 1000px; /* Tamanho ajustado da tabela */
+            padding: 0 20px;
+        }
+
+        h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: #333; /* Cor de fundo preto */
+            color: white;
+            border: none;
+            padding: 10px 20px; /* Diminuído o padding para botões menores */
+            font-size: 16px; /* Font-size menor */
+            cursor: pointer;
+            border-radius: 8px;
+            width: auto;
+            transition: background-color 0.3s ease;
+            margin: 10px;
+        }
+
+        button:hover {
+            background-color: #555; /* Cor mais clara no hover */
+        }
+
+        .table-container {
+            margin-top: 30px;
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 12px; /* Curvatura nas pontas */
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        .input-field {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 180px;
+        }
+
+        .input-field-small {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 120px;
+        }
+
+        .footer-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Faltas - Sistema Escolar</h1>
+    <div id="userInfo"></div>
+    <button id="loginButton" onclick="window.location.href = 'login.html';" style="display: none;">Login</button>
+    <button id="logoutButton" onclick="logout();" style="display: none;">Logout</button>
+</header>
+
+<div class="container">
+    <h2>Faltas dos Alunos</h2>
+
+    <div class="input-field-container">
+        <label for="turma">Nome da Turma:</label>
+        <input type="text" id="turma" class="input-field" placeholder="Digite o nome da turma">
+    </div>
+
+    <div class="table-container">
+        <h3>Lista de Faltas</h3>
+        <table id="faltasTable">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Horário</th>
+                    <th>Motivo</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- As faltas serão inseridas aqui -->
+            </tbody>
+        </table>
+        <button onclick="adicionarFalta()">Adicionar Falta</button>
+    </div>
+
+    <div class="footer-buttons">
+        <button onclick="window.location.href = 'index.html';">Início</button>
+        <button onclick="window.location.href = 'horario.html';">Acessar Horário</button>
+        <button onclick="window.location.href = 'notas.html';">Ir para Notas</button>
+    </div>
+</div>
+
+<script>
+    // Verifica se o usuário está logado
+    const userEmail = sessionStorage.getItem("userEmail");
+
+    if (userEmail) {
+        document.getElementById("userInfo").innerText = `Usuário logado: ${userEmail}`;
+        document.getElementById("loginButton").style.display = 'none';
+        document.getElementById("logoutButton").style.display = 'inline-block';
+    } else {
+        document.getElementById("loginButton").style.display = 'inline-block';
+        document.getElementById("logoutButton").style.display = 'none';
+    }
+
+    // Função para logout com confirmação
+    function logout() {
+        if (confirm("Você tem certeza que deseja sair?")) {
+            sessionStorage.removeItem("userEmail"); // Remove o e-mail do Session Storage
+            window.location.href = "login.html"; // Redireciona para a página de login
+        }
+    }
+
+    // Função para adicionar uma falta à tabela
+    function adicionarFalta() {
+        const turma = document.getElementById("turma").value;
+        if (!turma) {
+            alert("Por favor, insira o nome da turma.");
+            return;
+        }
+
+        const table = document.getElementById("faltasTable").getElementsByTagName('tbody')[0];
+        const newRow = table.insertRow();
+        
+        // Cria células com inputs para permitir a edição direta
+        const cellData = newRow.insertCell(0);
+        const cellHorario = newRow.insertCell(1);
+        const cellMotivo = newRow.insertCell(2);
+        const cellEstado = newRow.insertCell(3);
+        
+        cellData.innerHTML = `<input type="text" value="dd/mm/aaaa" class="input-field" />`;
+        cellHorario.innerHTML = `<input type="text" value="hh:mm" class="input-field-small" />`;
+        cellMotivo.innerHTML = `<input type="text" value="Motivo da falta" class="input-field" />`;
+        cellEstado.innerHTML = `<input type="text" value="Justificada" class="input-field" />`;
+    }
+</script>
+
+</body>
+</html>

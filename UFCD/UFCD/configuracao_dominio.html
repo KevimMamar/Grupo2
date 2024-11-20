@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuração de Domínio - Sistema Inovar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            color: black;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background-color: #f2f2f2;
+            padding: 40px;
+            border-radius: 10px;
+            width: 300px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="password"], select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #fff;
+            color: black;
+            text-align: left;
+        }
+        button {
+            width: calc(100% - 20px);
+            padding: 10px;
+            background-color: #333;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Configuração de Contas</h2>
+
+    <label for="tipoConta">Tipo de Conta:</label>
+    <select id="tipoConta" onchange="mostrarCampos()">
+        <option value="selecione">Selecione...</option>
+        <option value="professor">Professor</option>
+        <option value="aluno">Aluno</option>
+        <option value="ambos">Ambos</option>
+    </select>
+
+    <!-- Campos do Professor -->
+    <div id="camposProfessor" class="hidden">
+        <label for="emailProfessor">E-mail do Professor:</label>
+        <input type="text" id="emailProfessor" placeholder="dominio@escola.com">
+
+        <label for="senhaProfessor">Palavra-passe do Professor:</label>
+        <input type="password" id="senhaProfessor" placeholder="Digite a palavra-passe">
+    </div>
+
+    <!-- Campos do Aluno -->
+    <div id="camposAluno" class="hidden">
+        <label for="emailAluno">E-mail do Aluno:</label>
+        <input type="text" id="emailAluno" placeholder="dominio@escola.com">
+
+        <label for="senhaAluno">Palavra-passe do Aluno:</label>
+        <input type="password" id="senhaAluno" placeholder="Digite a palavra-passe">
+    </div>
+
+    <button onclick="criarConta()">Criar Contas</button>
+
+    <p id="msgSucesso" style="color: green; display: none;">Contas criadas com sucesso!</p>
+    <p id="msgErro" style="color: red; display: none;">Por favor, preencha os campos corretamente.</p>
+</div>
+
+<script>
+    function mostrarCampos() {
+        const tipoConta = document.getElementById("tipoConta").value;
+        const camposProfessor = document.getElementById("camposProfessor");
+        const camposAluno = document.getElementById("camposAluno");
+
+        // Mostrar ou ocultar campos com base na seleção
+        if (tipoConta === "professor") {
+            camposProfessor.classList.remove("hidden");
+            camposAluno.classList.add("hidden");
+        } else if (tipoConta === "aluno") {
+            camposAluno.classList.remove("hidden");
+            camposProfessor.classList.add("hidden");
+        } else if (tipoConta === "ambos") {
+            camposProfessor.classList.remove("hidden");
+            camposAluno.classList.remove("hidden");
+        } else {
+            camposProfessor.classList.add("hidden");
+            camposAluno.classList.add("hidden");
+        }
+    }
+
+    function criarConta() {
+        const tipoConta = document.getElementById("tipoConta").value;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        let valid = true;
+        let mensagensErro = [];
+
+        if (tipoConta === "professor" || tipoConta === "ambos") {
+            const emailProfessor = document.getElementById("emailProfessor").value;
+            const senhaProfessor = document.getElementById("senhaProfessor").value;
+
+            if (!emailRegex.test(emailProfessor) || !senhaProfessor) {
+                mensagensErro.push("Professor: e-mail ou palavra-passe inválidos.");
+                valid = false;
+            } else {
+                console.log("E-mail do Professor: " + emailProfessor);
+                console.log("Palavra-passe do Professor: " + senhaProfessor);
+            }
+        }
+
+        if (tipoConta === "aluno" || tipoConta === "ambos") {
+            const emailAluno = document.getElementById("emailAluno").value;
+            const senhaAluno = document.getElementById("senhaAluno").value;
+
+            if (!emailRegex.test(emailAluno) || !senhaAluno) {
+                mensagensErro.push("Aluno: e-mail ou palavra-passe inválidos.");
+                valid = false;
+            } else {
+                console.log("E-mail do Aluno: " + emailAluno);
+                console.log("Palavra-passe do Aluno: " + senhaAluno);
+            }
+        }
+
+        // Exibir mensagens de sucesso ou erro
+        if (valid) {
+            document.getElementById("msgSucesso").style.display = "block";
+            document.getElementById("msgErro").style.display = "none";
+        } else {
+            document.getElementById("msgErro").innerText = mensagensErro.join("\n");
+            document.getElementById("msgErro").style.display = "block";
+            document.getElementById("msgSucesso").style.display = "none";
+        }
+    }
+</script>
+
+</body>
+</html>

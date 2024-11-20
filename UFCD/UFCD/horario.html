@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horário - Sistema Inovar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 100px; /* Espaço para o header fixo */
+            width: 100%;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+
+        h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            margin-top: 30px;
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 12px; /* Borda arredondada */
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        select, input[type="time"], input[type="text"] {
+            width: 90%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        .footer-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Horário - Sistema Inovar</h1>
+</header>
+
+<div class="container">
+    <h2>Horário das Aulas</h2>
+
+    <div class="table-container">
+        <table id="horarioTable">
+            <thead>
+                <tr>
+                    <th>Dia</th>
+                    <th>Período</th>
+                    <th>Horário de Início</th>
+                    <th>Horário de Término</th>
+                    <th>Turma</th>
+                    <th>Sala</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Linhas de horário serão carregadas aqui -->
+            </tbody>
+        </table>
+        <button onclick="adicionarLinha()">Adicionar Linha</button>
+    </div>
+
+    <div class="footer-buttons">
+        <button onclick="salvarHorarios()">Salvar Horários</button>
+        <button onclick="window.location.href = 'index.html';">Início</button>
+        <button onclick="window.location.href = 'notas.html';">Notas</button>
+        <button onclick="window.location.href = 'faltas.html';">Faltas</button>
+    </div>
+</div>
+
+<script>
+    // Carregar horários salvos
+    function carregarHorarios() {
+        const horarios = JSON.parse(localStorage.getItem("horarios")) || [];
+        const table = document.getElementById("horarioTable").getElementsByTagName('tbody')[0];
+        table.innerHTML = ""; // Limpa a tabela
+
+        horarios.forEach(horario => {
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td>
+                    <select>
+                        <option value="Segunda-feira" ${horario.dia === "Segunda-feira" ? "selected" : ""}>Segunda-feira</option>
+                        <option value="Terça-feira" ${horario.dia === "Terça-feira" ? "selected" : ""}>Terça-feira</option>
+                        <option value="Quarta-feira" ${horario.dia === "Quarta-feira" ? "selected" : ""}>Quarta-feira</option>
+                        <option value="Quinta-feira" ${horario.dia === "Quinta-feira" ? "selected" : ""}>Quinta-feira</option>
+                        <option value="Sexta-feira" ${horario.dia === "Sexta-feira" ? "selected" : ""}>Sexta-feira</option>
+                    </select>
+                </td>
+                <td>
+                    <select>
+                        <option value="Manhã" ${horario.periodo === "Manhã" ? "selected" : ""}>Manhã</option>
+                        <option value="Tarde" ${horario.periodo === "Tarde" ? "selected" : ""}>Tarde</option>
+                    </select>
+                </td>
+                <td><input type="time" value="${horario.inicio}"></td>
+                <td><input type="time" value="${horario.termino}"></td>
+                <td><input type="text" placeholder="Turma" value="${horario.turma}"></td>
+                <td>
+                    <select>
+                        <option value="Sala 1" ${horario.sala === "Sala 1" ? "selected" : ""}>Sala 1</option>
+                        <option value="Sala 2" ${horario.sala === "Sala 2" ? "selected" : ""}>Sala 2</option>
+                        <option value="Sala 3" ${horario.sala === "Sala 3" ? "selected" : ""}>Sala 3</option>
+                        <option value="Sala 4" ${horario.sala === "Sala 4" ? "selected" : ""}>Sala 4</option>
+                        <option value="Sala 5" ${horario.sala === "Sala 5" ? "selected" : ""}>Sala 5</option>
+                        <option value="Sala A" ${horario.sala === "Sala A" ? "selected" : ""}>Sala A</option>
+                        <option value="Outra" ${horario.sala !== "Sala 1" && horario.sala !== "Sala 2" && horario.sala !== "Sala 3" && horario.sala !== "Sala 4" && horario.sala !== "Sala 5" && horario.sala !== "Sala A" ? "selected" : ""}>Outra</option>
+                    </select>
+                </td>
+            `;
+        });
+    }
+
+    // Salvar horários no localStorage
+    function salvarHorarios() {
+        const table = document.getElementById("horarioTable").getElementsByTagName('tbody')[0];
+        const rows = table.getElementsByTagName('tr');
+        const horarios = [];
+
+        for (let row of rows) {
+            const selects = row.getElementsByTagName('select');
+            const inputs = row.getElementsByTagName('input');
+            horarios.push({
+                dia: selects[0].value,
+                periodo: selects[1].value,
+                inicio: inputs[0].value,
+                termino: inputs[1].value,
+                turma: inputs[2].value,
+                sala: selects[2].value
+            });
+        }
+
+        localStorage.setItem("horarios", JSON.stringify(horarios));
+        alert("Horários salvos com sucesso!");
+    }
+
+    // Adicionar uma linha na tabela
+    function adicionarLinha() {
+        const table = document.getElementById("horarioTable").getElementsByTagName('tbody')[0];
+        const newRow = table.insertRow();
+
+        newRow.innerHTML = `
+            <td>
+                <select>
+                    <option value="Segunda-feira">Segunda-feira</option>
+                    <option value="Terça-feira">Terça-feira</option>
+                    <option value="Quarta-feira">Quarta-feira</option>
+                    <option value="Quinta-feira">Quinta-feira</option>
+                    <option value="Sexta-feira">Sexta-feira</option>
+                </select>
+            </td>
+            <td>
+                <select>
+                    <option value="Manhã">Manhã</option>
+                    <option value="Tarde">Tarde</option>
+                </select>
+            </td>
+            <td><input type="time"></td>
+            <td><input type="time"></td>
+            <td><input type="text" placeholder="Turma"></td>
+            <td>
+                <select>
+                    <option value="Sala 1">Sala 1</option>
+                    <option value="Sala 2">Sala 2</option>
+                    <option value="Sala 3">Sala 3</option>
+                    <option value="Sala 4">Sala 4</option>
+                    <option value="Sala 5">Sala 5</option>
+                </select>
+            </td>
+        `;
+    }
+
+    // Carregar os horários ao carregar a página
+    window.onload = carregarHorarios;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Faltas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .container {
+            margin-top: 80px;
+            text-align: center;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        .table-container {
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Consulta de Faltas</h1>
+</header>
+
+<div class="container">
+    <h2>Lista de Alunos</h2>
+    <div class="table-container">
+        <table id="alunosTable">
+            <thead>
+                <tr>
+                    <th>Nome do Aluno</th>
+                    <th>Turma</th>
+                    <th>Total de Faltas</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Linhas dos alunos serão adicionadas dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <h2 id="tituloFaltas" style="display: none;">Faltas de <span id="nomeAluno"></span></h2>
+    <div class="table-container" id="faltasContainer" style="display: none;">
+        <table id="faltasTable">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Horário</th>
+                    <th>Motivo</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- As faltas específicas do aluno aparecerão aqui -->
+            </tbody>
+        </table>
+    </div>
+
+    <button onclick="voltarLista()" id="voltarButton" style="display: none;">Voltar à Lista de Alunos</button>
+</div>
+
+<script>
+    const alunos = []; // Lista de alunos (adicionar dinamicamente)
+    const faltasPorAluno = {}; // Dicionário de faltas (adicionar dinamicamente)
+
+    function atualizarTabelaAlunos() {
+        const tabelaAlunos = document.getElementById("alunosTable").getElementsByTagName("tbody")[0];
+        tabelaAlunos.innerHTML = ""; // Limpa a tabela
+
+        alunos.forEach(aluno => {
+            const row = tabelaAlunos.insertRow();
+            row.onclick = () => verFaltas(aluno.nome);
+
+            const nomeCell = row.insertCell(0);
+            const turmaCell = row.insertCell(1);
+            const faltasCell = row.insertCell(2);
+
+            nomeCell.innerText = aluno.nome;
+            turmaCell.innerText = aluno.turma;
+            faltasCell.innerText = faltasPorAluno[aluno.nome]?.length || 0;
+        });
+    }
+
+    function verFaltas(nomeAluno) {
+        document.getElementById("nomeAluno").innerText = nomeAluno;
+        document.getElementById("tituloFaltas").style.display = "block";
+        document.getElementById("faltasContainer").style.display = "block";
+        document.getElementById("voltarButton").style.display = "block";
+
+        const tabelaFaltas = document.getElementById("faltasTable").getElementsByTagName("tbody")[0];
+        tabelaFaltas.innerHTML = "";
+
+        const faltas = faltasPorAluno[nomeAluno] || [];
+        faltas.forEach(falta => {
+            const row = tabelaFaltas.insertRow();
+            row.insertCell(0).innerText = falta.data;
+            row.insertCell(1).innerText = falta.horario;
+            row.insertCell(2).innerText = falta.motivo;
+            row.insertCell(3).innerText = falta.estado;
+        });
+    }
+
+    function voltarLista() {
+        document.getElementById("tituloFaltas").style.display = "none";
+        document.getElementById("faltasContainer").style.display = "none";
+        document.getElementById("voltarButton").style.display = "none";
+    }
+
+    // Exemplo: Adicionando dinamicamente alunos e faltas (pode ser adaptado conforme necessário)
+    alunos.push({ nome: "João Silva", turma: "9º A" });
+    alunos.push({ nome: "Maria Oliveira", turma: "10º B" });
+    faltasPorAluno["João Silva"] = [
+        { data: "01/11/2024", horario: "08:00", motivo: "Doença", estado: "Justificada" }
+    ];
+    faltasPorAluno["Maria Oliveira"] = [
+        { data: "02/11/2024", horario: "11:00", motivo: "Compromisso familiar", estado: "Justificada" }
+    ];
+
+    atualizarTabelaAlunos(); // Atualiza a tabela com os dados
+</script>
+
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notas - Sistema Inovar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 100px; /* Espaço para o header fixo */
+            width: 100%;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+
+        h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 200px;
+            text-align: center;
+        }
+
+        .table-container {
+            margin-top: 30px;
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            margin: 10px;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        .footer-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Notas - Sistema Inovar</h1>
+</header>
+
+<div class="container">
+    <h2>Notas dos Alunos</h2>
+
+    <div class="input-field-container">
+        <label for="turma">Nome da Turma:</label>
+        <input type="text" id="turma" class="input-field" placeholder="Digite o nome da turma">
+    </div>
+
+    <div class="table-container">
+        <h3>Lista de Notas</h3>
+        <table id="notasTable">
+            <thead>
+                <tr>
+                    <th>Nome do Aluno</th>
+                    <th>Disciplina</th>
+                    <th>Nota</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Linhas de notas serão inseridas aqui -->
+            </tbody>
+        </table>
+        <button onclick="adicionarLinha()">Adicionar Linha</button>
+    </div>
+
+    <div class="footer-buttons">
+        <button onclick="window.location.href = 'index.html';">Início</button>
+        <button onclick="window.location.href = 'horario.html';">Horário</button>
+        <button onclick="window.location.href = 'faltas.html';">Faltas</button>
+    </div>
+</div>
+
+<script>
+    const notasSalvas = JSON.parse(localStorage.getItem('notas')) || [];
+
+    // Renderiza a tabela com os dados salvos
+    function renderizarTabela() {
+        const tableBody = document.getElementById("notasTable").getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = ""; // Limpa a tabela
+
+        notasSalvas.forEach((nota, index) => {
+            const newRow = tableBody.insertRow();
+            newRow.innerHTML = `
+                <td><input type="text" class="input-field" value="${nota.nome}"></td>
+                <td><input type="text" class="input-field" value="${nota.disciplina}"></td>
+                <td><input type="number" class="input-field" min="1" max="20" value="${nota.nota}"></td>
+                <td>
+                    <button onclick="salvarLinha(${index})">Salvar</button>
+                </td>
+            `;
+        });
+    }
+
+    // Adiciona uma nova linha à tabela
+    function adicionarLinha() {
+        notasSalvas.push({
+            nome: "",
+            disciplina: "",
+            nota: "",
+        });
+        salvarNotasLocal();
+        renderizarTabela();
+    }
+
+    // Salva uma linha específica
+    function salvarLinha(index) {
+        const tableBody = document.getElementById("notasTable").getElementsByTagName('tbody')[0];
+        const row = tableBody.rows[index];
+        const inputs = row.querySelectorAll('input');
+
+        notasSalvas[index] = {
+            nome: inputs[0].value,
+            disciplina: inputs[1].value,
+            nota: inputs[2].value,
+        };
+
+        salvarNotasLocal();
+        alert("Nota salva com sucesso!");
+    }
+
+    // Salva todas as notas no localStorage
+    function salvarNotasLocal() {
+        localStorage.setItem('notas', JSON.stringify(notasSalvas));
+    }
+
+    // Inicializa a tabela ao carregar a página
+    window.onload = renderizarTabela;
+</script>
+
+</body>
+</html>

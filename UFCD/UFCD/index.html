@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Início - Sistema Inovar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        #userInfo {
+            color: white;
+            font-size: 16px;
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 100px; /* Espaço para o header fixo */
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+
+        h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: #333; /* Cor de fundo preto */
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 8px;
+            width: 200px;
+            transition: background-color 0.3s ease;
+            margin: 10px;
+        }
+
+        button:hover {
+            background-color: #555; /* Cor mais clara no hover */
+        }
+
+        .hidden {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Início - Sistema Escolar</h1>
+    <div id="userInfo"></div>
+    <button id="loginButton" onclick="window.location.href = 'login.html';" class="hidden">Login</button>
+    <button id="logoutButton" onclick="logout();" class="hidden">Logout</button>
+</header>
+
+<div class="container">
+    <h2>Bem-vindo ao Sistema Escolar</h2>
+
+    <div class="button-container">
+        <button onclick="window.location.href = 'horario.html';">Acessar Horário</button>
+        <button onclick="window.location.href = 'notas.html';">Ir para Notas</button>
+        <button onclick="window.location.href = 'faltas.html';">Ir para Faltas</button>
+    </div>
+</div>
+
+<script>
+    // Verifica se o usuário está logado
+    const userEmail = sessionStorage.getItem("userEmail");
+
+    if (userEmail) {
+        document.getElementById("userInfo").innerText = `Usuário logado: ${userEmail}`;
+        document.getElementById("loginButton").classList.add('hidden');
+        document.getElementById("logoutButton").classList.remove('hidden');
+    } else {
+        alert("É necessário iniciar a sessão para acessar esta página.");
+        window.location.href = "login.html"; // Redireciona para o login se não estiver autenticado
+    }
+
+    // Função para logout com confirmação
+    function logout() {
+        if (confirm("Você tem certeza que deseja sair?")) {
+            sessionStorage.removeItem("userEmail"); // Remove o e-mail do Session Storage
+            window.location.href = "login.html"; // Redireciona para a página de login
+        }
+    }
+</script>
+
+</body>
+</html>
